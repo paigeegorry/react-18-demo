@@ -1,23 +1,25 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import { getInfo } from './services/apiFetch';
 
 function App() {
+  const numberOfPokemon = 1000;
+  const handleClick = () => {
+    getInfo(numberOfPokemon).then((res) => setPokemon(res?.results))
+  }
+  const [pokemon, setPokemon] = useState([]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div>
+      <header>
+        Testing React 18
       </header>
+      <button onClick={handleClick}>Click to fetch pokemon</button>
+      <ul>
+        {pokemon && pokemon.map((character) => (
+          <li key={character.name}>{character.name}</li>
+        ))
+        }
+      </ul>
     </div>
   );
 }
