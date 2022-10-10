@@ -1,17 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import './App.css';
 import PokemonList from './PokemonList';
-import { getInfo } from './services/apiFetch';
-
-const filterPokemon = (filterTerm) => {
-  const pokemon = getInfo();
-  if(filterTerm === '') return pokemon
-  let newPokemonArr = pokemon;
-  newPokemonArr = newPokemonArr.filter((poke) => poke.name.includes(filterTerm));
-  return newPokemonArr
-}
+import filterPokemon from './utils/filterPokemon';
 
 function App() {
+  const [isPending, startTransition] = useTransition();
   const [filterTerm, setFilterTerm] = useState('');
   const [filterInTimeout, setFilterInTimeout] = useState('');
   const filterTermRef = useRef(filterTerm);
@@ -26,7 +19,9 @@ function App() {
   }, [filterTerm])
 
   const handleChange = ({target}) => {
-    setFilterTerm(target.value);
+    startTransition(() => {
+      setFilterTerm(target.value);
+    })
   }
 
   return (
@@ -35,7 +30,7 @@ function App() {
         Testing React 18
       </header>
       <br/>
-      <input type="text" value={filterTerm} onChange={handleChange}placeholder="Filter by name (i.e. Pikachu, Bulbasaur...)" />
+      <input type="text" value={filterInTimeout} onChange={handleChange}placeholder="Filter by name (i.e. Pikachu, Bulbasaur...)" />
       <PokemonList pokemon={filteredPokemon} />
     </div>
   );
