@@ -1,9 +1,9 @@
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import './App.css';
 import ProductList from './ProductList';
-import { getInfo } from './utils/apiFetch';
+import { generateProducts } from './utils/generateProducts';
 
-const dummyProducts = getInfo();
+const dummyProducts = generateProducts();
 
 function filterProducts(filterTerm) {
   if(!filterTerm) {
@@ -14,16 +14,22 @@ function filterProducts(filterTerm) {
 
 
 function App() {
+  // useTransition = Returns a stateful value for the pending state of the transition, and a function to start it
+  // isPending = indicates when a transition is active to show a pending state
+  // startTransition = lets you mark updates in the provided callback as transitions
   const [isPending, startTransition] = useTransition();
   const [filterTerm, setFilterTerm] = useState('');
+  const initialProductState = filterProducts();
+  const [filteredProducts, setFilteredProducts] = useState(initialProductState);
 
-  const filteredProducts = filterProducts(filterTerm);
+  useEffect(() => {
+    startTransition(() => {
+      setFilteredProducts(filterProducts(filterTerm));
+    });
+  }, [filterTerm]);
 
   const handleChange = ({target}) => {
-    startTransition(() => {
-      setFilterTerm(target.value);
-    })
-    // setFilterTerm(target.value);
+    setFilterTerm(target.value);
   }
 
   return (
@@ -33,6 +39,7 @@ function App() {
       </header>
       <br/>
       <input type="text" value={filterTerm} onChange={handleChange}placeholder="Filter by product number (e.g. 999, 123...)" style={{width: '300px'}} />
+      {isPending && <p>Please wait...</p>}
       <ProductList products={filteredProducts} />
     </div>
   );
