@@ -45,19 +45,18 @@ function App() {
   };
 
   return (
-    <div>
+    <div style={{ margin: '20px' }}>
       <header>
         <h1>Testing React 18</h1>
       </header>
       <br/>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-        <div>
+        <div style={{ borderRight: '1px solid black' }}>
           <h2>Using React 18 Hooks</h2>
           <input type="text" value={filterTerm} onChange={handleChange} placeholder="Filter by product number (e.g. 999, 123...)" style={{width: '300px'}} />
-          {isPending && <p>Please wait...</p>}
-          <ProductList products={filteredProducts} useHook />
+          {isPending ? <p>Please wait...</p> : <ProductList products={filteredProducts} useHook />}
         </div>
-        <div>
+        <div style={{ marginLeft: '20px' }}>
           <h2>No Hooks</h2>
           <input type="text" value={filterTermNoHook} onChange={handleChangeNoHook} placeholder="Filter by product number (e.g. 999, 123...)" style={{width: '300px'}} />
           <ProductList products={noHookFilteredProducts} />

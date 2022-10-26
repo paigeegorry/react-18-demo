@@ -6,7 +6,7 @@ export default function ProductList({products = [], useHook}) {
   const deferredProducts = useDeferredValue(products);
   const productsToDisplay = useHook ? deferredProducts : products;
   return (
-    <ul style={{'border-left': '1px solid black'}}>
+    <ul>
         {productsToDisplay.map((product, idx) => (
           <Product product={product} />
         ))}
