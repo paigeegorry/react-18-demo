@@ -14,13 +14,17 @@ function filterProducts(filterTerm) {
 
 
 function App() {
+  const initialProductState = filterProducts();
+
   // useTransition = Returns a stateful value for the pending state of the transition, and a function to start it
   // isPending = indicates when a transition is active to show a pending state
   // startTransition = lets you mark updates in the provided callback as transitions
   const [isPending, startTransition] = useTransition();
   const [filterTerm, setFilterTerm] = useState('');
-  const initialProductState = filterProducts();
   const [filteredProducts, setFilteredProducts] = useState(initialProductState);
+
+  const [filterTermNoHook, setFilterTermNoHook] = useState('');
+  const [noHookFilteredProducts, setNoHookFilteredProducts] = useState(initialProductState);
 
   useEffect(() => {
     startTransition(() => {
@@ -28,19 +32,37 @@ function App() {
     });
   }, [filterTerm]);
 
-  const handleChange = ({target}) => {
+  useEffect(() => {
+    setNoHookFilteredProducts(filterProducts(filterTermNoHook))
+  }, [filterTermNoHook]);
+
+  const handleChange = ({ target }) => {
     setFilterTerm(target.value);
-  }
+  };
+  
+  const handleChangeNoHook = ({target}) => {
+    setFilterTermNoHook(target.value);
+  };
 
   return (
     <div>
       <header>
-        Testing React 18
+        <h1>Testing React 18</h1>
       </header>
       <br/>
-      <input type="text" value={filterTerm} onChange={handleChange}placeholder="Filter by product number (e.g. 999, 123...)" style={{width: '300px'}} />
-      {isPending && <p>Please wait...</p>}
-      <ProductList products={filteredProducts} />
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div>
+          <h2>Using React 18 Hooks</h2>
+          <input type="text" value={filterTerm} onChange={handleChange} placeholder="Filter by product number (e.g. 999, 123...)" style={{width: '300px'}} />
+          {isPending && <p>Please wait...</p>}
+          <ProductList products={filteredProducts} useHook />
+        </div>
+        <div>
+          <h2>No Hooks</h2>
+          <input type="text" value={filterTermNoHook} onChange={handleChangeNoHook} placeholder="Filter by product number (e.g. 999, 123...)" style={{width: '300px'}} />
+          <ProductList products={noHookFilteredProducts} />
+        </div>
+      </div>
     </div>
   );
 }
